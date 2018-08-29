@@ -274,6 +274,7 @@ function boincuser_init() {
         if (module_exists('boincuser_delete')) {
           $paths_to_ignore[] = 'user/' . $user->uid . '/delete';
           $paths_to_ignore[] = 'user/' . $user->uid . '/deleteconfirm/*';
+          $paths_to_ignore[] = 'user/' . $user->uid . '/odeleteconfirm/*';
         }
         if (!_boincuser_ignore_paths($path, $paths_to_ignore)) {
           drupal_goto('user/termsofuse');
@@ -501,7 +502,7 @@ function boincuser_user($op, &$edit, &$account, $category = NULL) {
           }
 
           // Change boinc username
-          if ($edit['boincuser_name'] != $boinc_user->name) {
+          if ($edit['boincuser_name'] and ($edit['boincuser_name'] != $boinc_user->name)) {
             $boincuser_name = $edit['boincuser_name'];
             $result = $boinc_user->update(
                 "name='{$boincuser_name}'"
