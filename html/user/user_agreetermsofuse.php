@@ -1,3 +1,4 @@
+<?php
 // This file is part of BOINC.
 // http://boinc.berkeley.edu
 // Copyright (C) 2018 University of California
@@ -15,37 +16,31 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BOINC_WSLINFO_H
-#define BOINC_WSLINFO_H
+// Agree to terms of use form, used for existing users who need to
+// agree to the projects terms of use.
 
-#include <string>
+require_once("../inc/db.inc");
+require_once("../inc/util.inc");
+require_once("../inc/account.inc");
 
-#include "miofile.h"
-#include "parse.h"
+if (!isset($_COOKIE['tempuserid'])) {
+    error_page(tra("You are not logged in. Please login to agree to our terms of use."));
+}
 
-struct WSL {
-    std::string distro_name;
-    std::string name;
-    std::string version;
-    bool is_default;
 
-    WSL();
+check_get_args(array("next_url"));
 
-    void clear();
+$next_url = get_str('next_url', true);
+$next_url = urldecode($next_url);
+$next_url = sanitize_local_url($next_url);
+$next_url = urlencode($next_url);
 
-    void write_xml(MIOFILE&);
-    int parse(XML_PARSER&);
-};
+$u = "user_agreetermsofuse.php?next_url=".$next_url;
+redirect_to_secure_url($u);
 
-struct WSLS {
-    std::vector<WSL> wsls;
+page_head(tra("Agree to our Terms of Use."));
 
-    WSLS();
+user_agreetermsofuse_form($next_url);
 
-    void clear();
-
-    void write_xml(MIOFILE&);
-    int parse(XML_PARSER&);    
-};
-
-#endif
+page_tail();
+?>
